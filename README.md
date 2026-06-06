@@ -75,6 +75,31 @@ curl --header "Host: www.example.com" http://localhost:8888/
 ```
 You should see a `whoami` response naming the pod that served it. Re-run the curl a few times — it load-balances across the two replicas.
 
+## Note: why the `Host` header in the curl test
+
+The `HTTPRoute` only matches requests for the hostname `www.example.com`:
+
+```yaml
+hostnames: ["www.example.com"]
+```
+
+When testing locally we connect to `localhost:8888` (via `kubectl port-forward`),
+not to `www.example.com`, so we set the `Host` header manually to tell Envoy which
+route we want:
+
+```bash
+curl --header "Host: www.example.com" http://localhost:8888/
+```
+
+Envoy reads the header, matches it to the route, and forwards to the `whoami` Service.
+Without the header the request carries `Host: localhost`, matches no route, and Envoy
+returns `404` — a quick way to see hostname routing in action.
+
+In a real cluster you wouldn't do this: DNS resolves the hostname to the gateway's
+address and the client sets the `Host` header automatically. The manual header is
+only for local testing without DNS.
+
+
 > **Optional — make `PROGRAMMED=True` on kind (nice for a demo/video):** install `cloud-provider-kind`, which hands `LoadBalancer` Services an external IP locally:
 > ```bash
 > go install sigs.k8s.io/cloud-provider-kind@latest   # or download the binary from the repo releases
