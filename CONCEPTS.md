@@ -121,7 +121,7 @@ Every Gateway API object reports machine-readable status — this is your first 
 kubectl get gateway -n demo eg -o yaml | yq '.status.conditions'
 kubectl get httproute -n demo whoami -o yaml | yq '.status.parents'
 ```
-**Interview-grade debugging line:** *"`Programmed=False` on the Gateway means the controller couldn't realize the data plane; `ResolvedRefs=False` on the route means a backend Service/port is wrong — I read the conditions before I touch anything."* (That reliability-first instinct is exactly Brian's language.)
+**Debugging rule of thumb:** `Programmed=False` on the Gateway means the controller couldn't realize the data plane; `ResolvedRefs=False` on the route means a backend Service/port is wrong. Read the conditions before touching anything.
 
 ---
 

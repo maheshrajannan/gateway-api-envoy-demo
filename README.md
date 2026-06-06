@@ -89,7 +89,7 @@ helm uninstall eg -n envoy-gateway-system
 kind delete cluster --name gw-demo   # if you used kind
 ```
 
-## What makes this "as cloud-agnostic as possible" (the interview point)
+## What makes this "as cloud-agnostic as possible"
 - **Zero cloud annotations.** No `service.beta.kubernetes.io/aws-...` or Azure ingress annotations anywhere. Compare to classic Ingress, which needed cloud-specific annotations to do anything real.
 - **One data plane everywhere.** Envoy Gateway runs the same Envoy proxy on AKS and EKS — you're not swapping AWS ALB Ingress for Azure AGIC.
 - **The only cloud touch-point is the Gateway's Service type.** In a real cluster that Service is `LoadBalancer`; on a cloud it gets an external IP automatically, on kind you port-forward. Either way, *your manifests don't change* — which is exactly the "write routing once, run anywhere" story.
