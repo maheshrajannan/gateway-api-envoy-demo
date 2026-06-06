@@ -1,0 +1,14 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Local kube / secrets — never commit these
+kubeconfig
+*.kubeconfig
+.env
+*.local

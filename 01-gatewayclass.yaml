@@ -1,0 +1,11 @@
+# GatewayClass — owned by the INFRA PROVIDER ("C" in Class -> Gateway -> Routes)
+# Says "what kind of gateway" — here, one implemented by Envoy Gateway.
+# This is the ONLY object that names the implementation. Everything below is portable.
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: eg
+spec:
+  # The Envoy Gateway controller. This controllerName is the same on any cloud /
+  # any cluster where Envoy Gateway is installed — that is the agnostic part.
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller
