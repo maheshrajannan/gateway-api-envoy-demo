@@ -2,6 +2,32 @@
 
 A complete "hello world" of Gateway API served by Envoy Gateway. **Nothing in the YAML is cloud-specific** — the same files run identically on kind, AKS, or EKS. The only place a cloud ever shows up is *how the Gateway's Service gets an external address*, and that's handled by the platform, not by these manifests. That portability **is** the point of the demo.
 
+## Note: what Envoy and Envoy Gateway are
+
+**Envoy** is a high-performance, open-source proxy (a CNCF project). A proxy sits
+between clients and your services, receiving incoming requests and forwarding them
+to the right backend — handling routing, load balancing, TLS, retries, and
+observability along the way. Envoy is the **data plane**: the component that actually
+moves the traffic.
+
+**Envoy Gateway** is the **control plane**: a controller that implements the
+Kubernetes Gateway API on top of Envoy. You don't configure Envoy directly. Instead
+you create Gateway API objects (`GatewayClass`, `Gateway`, `HTTPRoute`), and Envoy
+Gateway translates them into Envoy configuration and programs the proxy for you.
+
+In this demo:
+
+- The `GatewayClass` names Envoy Gateway as the implementation.
+- When you create the `Gateway`, Envoy Gateway provisions an **Envoy proxy**
+  (a Deployment + Service) to serve that gateway's traffic.
+- Your `HTTPRoute` is translated into Envoy routing rules and pushed to that proxy
+  over xDS (Envoy's config API).
+- A request then flows: client → Envoy proxy → matched Service → Pod.
+
+So the split is: **you write portable Gateway API YAML; Envoy Gateway configures
+Envoy; Envoy carries the traffic.** The same objects work on any cluster or cloud —
+only the Envoy proxy underneath stays constant.
+
 ## The mental model — "Class → Gateway → Routes" (C-G-R)
 Ownership descends infra → platform → apps. Each file maps to one role:
 
